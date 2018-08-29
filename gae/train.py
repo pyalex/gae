@@ -15,7 +15,7 @@ from sklearn.metrics import roc_auc_score
 from sklearn.metrics import average_precision_score
 
 from gae.optimizer import OptimizerAE, OptimizerVAE
-from gae.input_data import load_data
+from gae.input_data import load_data, load_data_wiki
 from gae.model import GCNModelAE, GCNModelVAE
 from gae.preprocessing import preprocess_graph, construct_feed_dict, sparse_to_tuple, mask_test_edges
 
@@ -31,20 +31,22 @@ flags.DEFINE_float('dropout', 0., 'Dropout rate (1 - keep probability).')
 
 flags.DEFINE_string('model', 'gcn_ae', 'Model string.')
 flags.DEFINE_string('dataset', 'cora', 'Dataset string.')
-flags.DEFINE_integer('features', 1, 'Whether to use features (1) or not (0).')
+flags.DEFINE_integer('features', 0, 'Whether to use features (1) or not (0).')
 
 model_str = FLAGS.model
 dataset_str = FLAGS.dataset
 
 # Load data
-adj, features = load_data(dataset_str)
+
+#adj, features = load_data_wiki(dataset_str)
+adj, features, adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = load_data(dataset_str)
 
 # Store original adjacency matrix (without diagonal entries) for later
 adj_orig = adj
 adj_orig = adj_orig - sp.dia_matrix((adj_orig.diagonal()[np.newaxis, :], [0]), shape=adj_orig.shape)
 adj_orig.eliminate_zeros()
 
-adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = mask_test_edges(adj)
+# adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = mask_test_edges(adj)
 adj = adj_train
 
 if FLAGS.features == 0:

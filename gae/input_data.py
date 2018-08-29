@@ -2,6 +2,11 @@ import numpy as np
 import pickle as pkl
 import networkx as nx
 import scipy.sparse as sp
+import scipy.io as sio
+import os.path
+import pickle
+
+from .preprocessing import mask_test_edges
 
 
 def parse_index_file(filename):
@@ -34,3 +39,17 @@ def load_data(dataset):
     adj = nx.adjacency_matrix(nx.from_dict_of_lists(graph))
 
     return adj, features
+
+
+def load_data_wiki(filename):
+    adj = sio.loadmat(filename)['graph_sparse'].tocsr()
+
+    cache_filename = 'data/' + os.path.dirname(filename) + '_cached.pkl'
+    if os.path.isfile(cache_filename):
+        with open(cache_filename, 'r') as f:
+            train_test_split = tuple(pickle.load(f))
+            return (adj, sp.identity(adj.shape[0])) + train_test_split
+
+    train_test_split = mask_test_edges(adj)
+
+    return (adj, sp.identity(adj.shape[0])) + train_test_split
