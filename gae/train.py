@@ -39,7 +39,8 @@ dataset_str = FLAGS.dataset
 # Load data
 
 #adj, features = load_data_wiki(dataset_str)
-adj, features, adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = load_data(dataset_str)
+adj, features, adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = \
+    load_data_wiki(dataset_str)
 
 # Store original adjacency matrix (without diagonal entries) for later
 adj_orig = adj
