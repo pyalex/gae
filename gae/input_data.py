@@ -51,5 +51,7 @@ def load_data_wiki(filename):
             return (adj, sp.identity(adj.shape[0])) + train_test_split
 
     train_test_split = mask_test_edges(adj)
+    with open(cache_filename, 'w') as o:
+        pickle.dump(tuple(train_test_split), o)
 
     return (adj, sp.identity(adj.shape[0])) + train_test_split
